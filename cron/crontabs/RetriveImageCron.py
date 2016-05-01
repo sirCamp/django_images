@@ -8,6 +8,7 @@ from django.core.exceptions import ObjectDoesNotExist
 import time
 from django.utils import timezone
 from django.core.mail import get_connection, EmailMultiAlternatives
+import logging
 
 class RetriveImageCron(CronJobBase):
 
@@ -18,7 +19,7 @@ class RetriveImageCron(CronJobBase):
 
     def do(self):
 
-        print("CRON STARTED")
+        logging.info("CRON STARTED")
 
 
         access_token_configuration = None
@@ -33,7 +34,7 @@ class RetriveImageCron(CronJobBase):
 
             ACCESS_TOKEN = access_token_configuration.configuration_value
 
-            print("Token: found!")
+            logging.info("Token: found!")
 
 
         except ObjectDoesNotExist:
@@ -44,7 +45,7 @@ class RetriveImageCron(CronJobBase):
 
             access_token_configuration = Configuration.objects.create(configuration_key='ACCESS_TOKEN',
                                                                       configuration_value=ACCESS_TOKEN)
-            print("Token: saved!")
+            logging.info("Token: saved!")
 
 
         twitter = Twython(settings.TWITTER_API_KEY, access_token=ACCESS_TOKEN)
@@ -65,12 +66,11 @@ class RetriveImageCron(CronJobBase):
                 include_entities=True
             )
 
-
-            print("Search twitter since_id: "+last_check_configuration.configuration_value)
+            logging.info("Search twitter since_id: "+last_check_configuration.configuration_value)
 
         except ObjectDoesNotExist:
 
-            print("Search twitter with no id")
+            logging.info("Search twitter with no id")
 
             last_check_configuration = Configuration.objects.create(
                 configuration_key='NEXT_ID',
@@ -90,7 +90,7 @@ class RetriveImageCron(CronJobBase):
         try:
 
             album = Album.objects.get(album_name='album_'+settings.TWITTER_SEARCHED_HASHTAG)
-            print "Album find!"
+            logging.info("Album find!")
 
         except ObjectDoesNotExist:
 
@@ -102,15 +102,13 @@ class RetriveImageCron(CronJobBase):
                 album_created_at=timezone.now(),
                 album_updated_at= timezone.now()
             )
-            print "New Album created!"
+            logging.info("New Album created!")
 
         ## parsing query result
 
         for result in results.get('statuses'):
 
             for media in result.get('entities').get('media'):
-
-                print media.get('media_url')
 
                 if not Photo.objects.filter(photo_url=media.get('media_url')).exists():
 
@@ -139,10 +137,10 @@ class RetriveImageCron(CronJobBase):
                     album.save()
                     self.send(album)
 
-                    print photo
+                    logging.info("Added: "+str(photo))
                 else:
 
-                    print "This phosto already exsists"
+                    logging.info("This phosto already exsists")
 
 
 
@@ -150,7 +148,7 @@ class RetriveImageCron(CronJobBase):
 
         last_check_configuration.save()
 
-        print "CRON FINISHED"
+        logging.info("CRON FINISHED")
 
 
 
@@ -161,7 +159,6 @@ class RetriveImageCron(CronJobBase):
             next_goal_index = settings.ALBUM_GOALS.index(album.album_next_goal)
             next_goal_index = int(next_goal_index) + 1
 
-            print "arrivo"
             try:
 
                 connection = get_connection()
@@ -172,8 +169,6 @@ class RetriveImageCron(CronJobBase):
                 email_subject = settings.EMAIL_SUBJECT
 
                 email_subject = email_subject % (settings.TWITTER_SEARCHED_HASHTAG, album.album_next_goal)
-
-                print "try to send email"
 
                 msg = EmailMultiAlternatives(
 
@@ -186,7 +181,7 @@ class RetriveImageCron(CronJobBase):
                 )
 
                 msg.send()
-                print "Mail sended"
+                logging.info("Mail sended")
 
                 if album.album_next_goal < settings.ALBUM_GOALS[len(settings.ALBUM_GOALS)-1]:
                     album.album_next_goal = settings.ALBUM_GOALS[next_goal_index]
@@ -194,8 +189,6 @@ class RetriveImageCron(CronJobBase):
                     album.album_next_goal = settings.ALBUM_GOALS_LIMIT
 
                 album.save()
-                print "Album saved"
-
 
             except IndexError as e:
                 print "No mail to send"

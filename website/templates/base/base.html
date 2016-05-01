@@ -28,9 +28,93 @@
         {% block content %}{% endblock %}
     </div>
  </div>
-   <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+
    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
-   <!-- Include all compiled plugins (below), or include individual files as needed -->
    <script src="/static/js/bootstrap.min.js"></script>
+   <script>
+      window.fbAsyncInit = function() {
+        FB.init({
+          appId      : '855735074546415',
+          xfbml      : true,
+          version    : 'v2.5'
+        });
+      };
+
+      (function(d, s, id){
+         var js, fjs = d.getElementsByTagName(s)[0];
+         if (d.getElementById(id)) {return;}
+         js = d.createElement(s); js.id = id;
+         js.src = "//connect.facebook.net/en_US/sdk.js";
+         fjs.parentNode.insertBefore(js, fjs);
+       }(document, 'script', 'facebook-jssdk'));
+
+
+      jQuery('#share').on('click',function(){
+
+          jQuery.ajax({
+           url : '/post/',
+           dataType: "json",
+           method: 'GET',
+           success: function( data ) {
+                var domain = location.hostname;
+
+               FB.init({
+          appId      : '855735074546415',
+          xfbml      : true,
+          version    : 'v2.5'
+        });
+               FB.ui({
+                  method: `share`,
+                  name: 'Facebook Dialogs',
+                  href: $(location).attr('href'),
+                  link: 'https://developers.facebook.com/docs/dialogs/',
+                  picture: '',//'https://www.gravatar.com/avatar/73f94a33f2e3cbf0b36eddcee068283d?s=32&d=identicon&r=PG',//domain+'/'+data.imagepath,
+                  caption: 'Best photos',
+              },
+              function (response) {
+                  if (response && response.post_id) {
+                      alert('success');
+                  } else {
+                     alert('error');
+                  }
+              }
+            );
+           },
+           error: function( data ){
+
+               alert('Something went wrong, Please contact admin');
+           },
+           always:function(data){
+
+           }
+      });
+      })
+      /*
+         FB.ui(
+      {
+                  method: `share`,
+                  name: 'Facebook Dialogs',
+                  href: $(location).attr('href'),
+                  link: 'https://developers.facebook.com/docs/dialogs/',
+                  picture: 'your image url',
+                  caption: 'Ishelf Book',
+                  description: 'your description'
+              },
+              function (response) {
+                  if (response && response.post_id) {
+                      alert('success');
+                  } else {
+                     alert('error');
+                  }
+              }
+            );*/
+
+
+
+
+
+
+
+    </script>
  </body>
 </html>

@@ -1,3 +1,6 @@
 from django.shortcuts import render
 
-# Create your views here.
+from api.views.album import get_album_by_id
+from api.views.album import get_albums
+from api.views.photos import get_photos
+from api.views.photos import get_photo
