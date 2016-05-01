@@ -1,0 +1,40 @@
+{% extends 'base/base.html' %}
+
+{% block content %}
+    <div clas="row" style="margin-bottom: 100px;">
+       <div class="col-xs-offset-3 col-lg-pull-6">
+           <h1>Welcome {{ user.get_full_name|default:user.username }}!</h1>
+       </div>
+    </div>
+   <div class="row">
+
+        {% for photo in photos %}
+
+              <div class="panel panel-default">
+              <!-- Default panel contents -->
+              <div class="panel-heading">
+                  <span class="">Photo ID: {{ photo.photo_post_id }}</span>
+
+              </div>
+              <div class="panel-body">
+                 <div class="col-xs-12 col-md-6">
+                        <center>
+                            <img class="img-responsive img-thumbnail" src="{{photo.photo_url}}">
+                        </center>
+                </div>
+                <div class="col-xs-12 col-md-6">
+                    <ul class="list-group">
+                        <li class="list-group-item"> <span class="fa fa-heart" style="margin-right:5px;"></span> Likes: {{ photo.photo_likes }}</li>
+                        <li class="list-group-item"> <span class="fa fa-clock-o" style="margin-right:5px;"></span> Stored on: {{  photo.photo_created_at }}</li>
+                        <li class="list-group-item"><span class="fa fa-tag"style="margin-right:5px;"></span>Hashtags: {{ photo.photo_hashtags }}</li>
+                        <li class="list-group-item"><span class="fa fa-user"style="margin-right:5px;"></span>Published by: {{photo.photo_user}}</li>
+                    </ul>
+                </div>
+
+              </div>
+          </div>
+        {% endfor %}
+
+    </div>
+
+{% endblock %}
