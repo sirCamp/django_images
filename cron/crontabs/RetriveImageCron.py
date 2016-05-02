@@ -15,7 +15,7 @@ import os
 
 class RetriveImageCron(CronJobBase):
 
-    RUN_EVERY_MINS = 1 # every 5 mins
+    RUN_EVERY_MINS = 20 # every 20 mins
 
     schedule = Schedule(run_every_mins=RUN_EVERY_MINS)
     code = 'cron.retrive_image_cron'    # a unique code
