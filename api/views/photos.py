@@ -3,6 +3,19 @@ from cron.models import Album
 from django.http import JsonResponse
 from django.core import serializers
 
+def get_all_photos(request):
+
+    response = {}
+    response['photos'] = serializers.serialize('json',Photo.objects.all())
+    return JsonResponse(response)
+
+def get_all_photos_by_album(request,album_id):
+
+    response = {}
+    response['photos'] = serializers.serialize('json',Photo.objects.filter(photo_album_id=album_id))
+    return JsonResponse(response)
+
+
 def get_photos(request,album_id,first,limit):
 
     response = {}
