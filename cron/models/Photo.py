@@ -14,6 +14,7 @@ class Photo(models.Model):
     photo_user_name = models.CharField(max_length=500)
     photo_likes = models.IntegerField()
     photo_post_id = models.BigIntegerField()
+    photo_hash = models.CharField(max_length=1024)
     photo_created_at = models.DateTimeField()
     photo_album = models.ForeignKey(Album, on_delete=models.CASCADE)
 

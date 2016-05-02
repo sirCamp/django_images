@@ -6,15 +6,34 @@
            <h1>Welcome {{ user.get_full_name|default:user.username }}!</h1>
        </div>
     </div>
+
+{% if message %}
+
+    <div clas="row" style="margin-bottom: 50px;margin-top: 50px;">
+       <div class="alert alert-danger">
+           {{message}}
+       </div>
+    </div>
+
+{% else %}
     <div class="row">
-       <button id="share">Share</button>
+        <div class="panel col-xs-12">
+
+
+           <p>
+               <span style="font-size:18px;">Share your album best photos on Facebook</span>
+               <button class="bnt btn-facebook pull-right" id="share"><span class="fa fa-facebook" style="margin-right:5px;"></span>Share</button>
+               <span class="fa fa-2x fa-spin fa-spinner pull-right" id="loader" style="display: none;"></span>
+
+           </p>
+        </div>
     </div>
    <div class="row">
 
         {% for photo in photos %}
 
               <div class="panel panel-default">
-              <!-- Default panel contents -->
+
               <div class="panel-heading">
                   <span class="">Photo ID: {{ photo.photo_post_id }}</span>
 
@@ -64,5 +83,5 @@
       </ul>
     {% endif %}
 </div>
-
+{% endif %}
 {% endblock %}

@@ -15,6 +15,7 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 import ftplib
 import os
 import time
+from django.core.exceptions import ObjectDoesNotExist
 
 def index(request):
 
@@ -35,13 +36,14 @@ def start(request):
 
 
     try:
-        album = get_object_or_404(Album,album_name='album_'+settings.TWITTER_SEARCHED_HASHTAG)
-        all_photos = Photo.objects.filter(photo_album=album)
+        album = Album.objects.get(album_name='album_' + settings.TWITTER_SEARCHED_HASHTAG)
+        all_photos = Photo.objects.filter(photo_album=album).order_by('-photo_likes')
         paginator = Paginator(all_photos, 10)
         page = request.GET.get('page')
-
-
         photos = paginator.page(page)
+
+    except ObjectDoesNotExist as e:
+        return render(request, 'home/home.html', {'photos': [], 'message':'Album are not created yet, application must work with an Album'})
     except PageNotAnInteger:
 
         photos = paginator.page(1)
@@ -51,14 +53,21 @@ def start(request):
 
     return render(request,'home/home.html',{'photos': photos})
 
+
 @login_required
 def post(request):
 
-    #if not request.is_ajax():
-        #return HttpResponse(status=401)
+    if not request.is_ajax():
+        return HttpResponse(status=401)
+    try:
+        album = Album.objects.get(album_name='album_'+settings.TWITTER_SEARCHED_HASHTAG)
+    except  ObjectDoesNotExist as e:
 
+        return JsonResponse({
+            'response':'KO'
+        })
 
-    photos = Photo.objects.order_by('-photo_likes')[0:7]
+    photos = Photo.objects.filter(photo_album=album).order_by('-photo_likes')[0:7]
 
     images = []
     for photo in photos:
@@ -69,6 +78,7 @@ def post(request):
             images.append('website'+settings.STATIC_URL+'image/'+str(photo.photo_post_id)+".jpg")
 
     try:
+
         images = map(Image.open, images)
         widths, heights = zip(*(i.size for i in images))
 
@@ -82,26 +92,30 @@ def post(request):
             new_im.paste(im, (x_offset, 0))
             x_offset += im.size[0]
 
-        new_im.thumbnail((300,200),Image.ANTIALIAS)
-        new_im.save('website'+settings.STATIC_URL+"image/"+str(time.time())+".jpg")
+        #new_im.resize((400, 300), Image.NEAREST)#.thumbnail((400,300),Image.ANTIALIAS)
+        name = str(time.time()) + ".jpg"
+        new_im.save('website'+settings.STATIC_URL + "image/" + name)
 
-        instance = UserSocialAuth.objects.filter(provider='facebook').get()
+        session = ftplib.FTP(settings.HOST_FTP, settings.HOST_FTP_USER, settings.HOST_FTP_PASS)
+        file = open('website'+settings.STATIC_URL+"image/"+name, 'rb')
+        session.storbinary('STOR '+ name, file)
+        file.close()
+        session.quit()
 
-
-        #session = ftplib.FTP('ftp.stefanocampese.xyz', 'sircamp@stefanocampese.xyz', 'sircamp90133')
-        #file = open('website'+settings.STATIC_URL+"image/collage.jpg", 'rb')  # file to send
-        #print file
-        ##session.storbinary('STOR collage.jpg', file)  # send the file
-        #file.close()  # close file and FTP
-        #session.quit()
-
-        #clean all
         for photo in photos:
 
             if os.path.exists(os.path.dirname(os.path.dirname(__file__)) + settings.STATIC_URL + 'image/' + str(photo.photo_post_id) + ".jpg"):
                     os.remove(os.path.dirname(os.path.dirname(__file__))+settings.STATIC_URL+'image/'+str(photo.photo_post_id)+".jpg")
 
+        result = {
+            'url': settings.HOST_PHOTO_URL + "/"+name,
+            'message':'Best photo of %s album!'% (settings.TWITTER_SEARCHED_HASHTAG),
+            'title': settings.TWITTER_SEARCHED_HASHTAG,
+            'server':'http://stefanocampese.xyz',
+            'response':'OK'
+        }
     except Exception as e:
-        print "error"
+        print e
+        result = {'response':'KO'}
 
-    return JsonResponse({'imagepath':settings.STATIC_URL+"image/collage.jpg", 'token':instance.access_token})
+    return JsonResponse(result)

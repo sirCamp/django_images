@@ -5,10 +5,13 @@ from cron.models import Configuration
 from cron.models import Photo
 from cron.models import Album
 from django.core.exceptions import ObjectDoesNotExist
-import time
 from django.utils import timezone
 from django.core.mail import get_connection, EmailMultiAlternatives
 import logging
+import hashlib
+import urllib
+import os
+
 
 class RetriveImageCron(CronJobBase):
 
@@ -62,6 +65,7 @@ class RetriveImageCron(CronJobBase):
                 result_type='mixed',
                 count=100,
                 filter='twimg',
+                exclude='retweets',
                 since_id=last_check_configuration.configuration_value,
                 include_entities=True
             )
@@ -82,6 +86,7 @@ class RetriveImageCron(CronJobBase):
                 count=100,
                 filter='twimg',
                 result_type='mixed',
+                exclude='retweets',
                 include_entities=True
             )
 
@@ -106,11 +111,31 @@ class RetriveImageCron(CronJobBase):
 
         ## parsing query result
 
+        BLOCKSIZE = 65536
+        hasher = hashlib.sha1()
+
+        index = 0
         for result in results.get('statuses'):
 
             for media in result.get('entities').get('media'):
 
                 if not Photo.objects.filter(photo_url=media.get('media_url')).exists():
+
+                    hasher = hashlib.sha1()
+                    urllib.urlretrieve(media.get('media_url'),
+                                       'cron' + settings.STATIC_URL + "tmp/tmp.jpg")
+
+                    #hashign file to be sura that are be unique
+                    with open('cron' + settings.STATIC_URL + "tmp/tmp.jpg", 'rb') as afile:
+                        buf = afile.read(BLOCKSIZE)
+                        while len(buf) > 0:
+                            hasher.update(buf)
+                            buf = afile.read(BLOCKSIZE)
+
+                    hash = hasher.hexdigest()
+                    os.remove(os.path.dirname(os.path.dirname(__file__)) + '/' + settings.STATIC_URL + "tmp/tmp.jpg")
+                    if Photo.objects.filter(photo_hash=hash).exists():
+                       continue
 
                     hashtags = ""
 
@@ -118,6 +143,7 @@ class RetriveImageCron(CronJobBase):
                         hashtags += tag.get('text') + ","
 
                     hashtags = hashtags[:-1]
+
 
                     photo = Photo.objects.create(
 
@@ -128,6 +154,7 @@ class RetriveImageCron(CronJobBase):
                         photo_likes=int(result.get('favorite_count')),
                         photo_post_id=int(result.get('id')),
                         photo_hashtags=hashtags,
+                        photo_hash=hash,
                         photo_created_at=timezone.now(),
                         photo_album=album
 
@@ -141,6 +168,8 @@ class RetriveImageCron(CronJobBase):
                 else:
 
                     logging.info("This phosto already exsists")
+                index +=1
+
 
 
 

@@ -143,22 +143,21 @@ TWITTER_API_KEY='kI84vVSdMIv7G4lQ1zyKLv6AD'
 TWITTER_API_SECRET='Fsu4x4lhdOBF8qIgGBRhrpUMIn9giqQtidtbNowYHXFc7Yqnni'
 TWITTER_SEARCHED_HASHTAG="#carnival"
 
-CURRENT_ALBUM=1
 ALBUM_GOALS=[100,200,300,400,500]
-ALBUM_GOALS_LIMIT=6
+ALBUM_GOALS_LIMIT=501
 
-EMAIL_FROM="stefano.campese.90@gmail.com"
-EMAIL_TO="stefano.campese.90@gmail.com"
-EMAIL_BCC=""
+EMAIL_FROM="Hashtag@EversnapApp.com"
+EMAIL_TO=""
+EMAIL_BCC=[]
 EMAIL_BODY="I'm awesome"
 EMAIL_SUBJECT="%s has %s photos"
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_USE_TLS = True
-EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST = ''
 EMAIL_PORT = 587
-EMAIL_HOST_USER = 'stefano.campese@omnys.com'
-EMAIL_HOST_PASSWORD = 'campydjomnys'
+EMAIL_HOST_USER = ''
+EMAIL_HOST_PASSWORD = ''
 
 SOCIAL_AUTH_FACEBOOK_KEY='855735074546415'
 SOCIAL_AUTH_FACEBOOK_SECRET='100d4279a1cfcc5f0ad4b9ace78cf97f'
@@ -201,3 +200,8 @@ LOGGING = {
         },
     },
 }
+
+HOST_PHOTO_URL="http://stefanocampese.xyz/stefanocampese.xyz/sircamp"
+HOST_FTP="ftp.stefanocampese.xyz"
+HOST_FTP_USER="sircamp@stefanocampese.xyz"
+HOST_FTP_PASS="sircamp90133"
