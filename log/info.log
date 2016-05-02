@@ -33,3 +33,4 @@ Traceback (most recent call last):
     "Choices are: %s" % (name, ", ".join(available)))
 FieldError: Cannot resolve keyword 'photo_id' into field. Choices are: id, photo_album, photo_album_id, photo_created_at, photo_hashtags, photo_https_url, photo_likes, photo_post_id, photo_url, photo_user, photo_user_name
 Not Found: /ready_to_share.jpg
+Not Found: /favicon.ico

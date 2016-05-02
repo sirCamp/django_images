@@ -10,7 +10,8 @@ from django.http import JsonResponse
 from django.http import HttpResponseRedirect, HttpResponse
 import urllib
 from PIL import Image
-
+from social.apps.django_app.default.models import UserSocialAuth
+from open_facebook import OpenFacebook
 
 def index(request):
 
@@ -63,8 +64,13 @@ def post(request):
         new_im.thumbnail((300,200),Image.ANTIALIAS)
         new_im.save('website'+settings.STATIC_URL+"image/collage.jpg")
 
+        instance = UserSocialAuth.objects.filter(provider='facebook').get()
+        #facebook = OpenFacebook(instance.access_token)
+        #print facebook.set('me/photos', message='Check out Fashiolista',
+        #picture=photo, url='http://www.fashiolista.com')
+
 
     except Exception as e:
         print "error"
 
-    return JsonResponse({'imagepath':settings.STATIC_URL+"image/collage.jpg"})
+    return JsonResponse({'imagepath':settings.STATIC_URL+"image/collage.jpg", 'token':instance.access_token})
