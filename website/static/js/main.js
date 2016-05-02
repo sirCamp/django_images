@@ -34,20 +34,26 @@ jQuery(document).ready(function(){
 
                   jQuery('#loader').hide();
                   jQuery('#share').show();
-                  FB.ui({
-                    method: 'share_open_graph',
-                    action_type: 'og.shares',
-                    action_properties: JSON.stringify({
-                        object : {
-                           'og:url': data.server,
-                           'og:title': data.title,
-                           'og:description': data.message,
-                           'og:og:image:width': '400',
-                           'og:image:height': '300',
-                           'og:image': data.url
-                        }
-                    })
-                  });
+                  if(data.response != undefined && data.response == 'KO'){
+                        alert("Error dureing share on FB")
+                  }
+                  else {
+
+                      FB.ui({
+                          method: 'share_open_graph',
+                          action_type: 'og.shares',
+                          action_properties: JSON.stringify({
+                              object: {
+                                  'og:url': data.server,
+                                  'og:title': data.title,
+                                  'og:description': data.message,
+                                  'og:og:image:width': '400',
+                                  'og:image:height': '300',
+                                  'og:image': data.url
+                              }
+                          })
+                      });
+                  }
 
               },
               error: function(){
