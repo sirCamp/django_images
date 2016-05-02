@@ -146,7 +146,7 @@ TWITTER_SEARCHED_HASHTAG="#carnival"
 ALBUM_GOALS=[100,200,300,400,500]
 ALBUM_GOALS_LIMIT=501
 
-EMAIL_FROM="Hashtag@EversnapApp.com"
+EMAIL_FROM=""
 EMAIL_TO=""
 EMAIL_BCC=[]
 EMAIL_BODY="I'm awesome"
@@ -201,7 +201,7 @@ LOGGING = {
     },
 }
 
-HOST_PHOTO_URL="http://stefanocampese.xyz/stefanocampese.xyz/sircamp"
-HOST_FTP="ftp.stefanocampese.xyz"
-HOST_FTP_USER="sircamp@stefanocampese.xyz"
-HOST_FTP_PASS="sircamp90133"
+HOST_PHOTO_URL=""
+HOST_FTP=""
+HOST_FTP_USER=""
+HOST_FTP_PASS=""
