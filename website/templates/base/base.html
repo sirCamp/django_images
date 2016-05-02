@@ -4,7 +4,7 @@
    <meta charset="utf-8">
    <meta http-equiv="X-UA-Compatible" content="IE=edge">
    <meta name="viewport" content="width=device-width, initial-scale=1">
-   <title>{% block title %}Third-party Authentication Tutorial{% endblock %}</title>
+   <title>{% block title %}Image Scraper App{% endblock %}</title>
 
    <!-- Bootstrap -->
    <link href="/static/css/bootstrap.min.css" rel="stylesheet">
@@ -49,78 +49,40 @@
        }(document, 'script', 'facebook-jssdk'));
 
 
-      jQuery('#share').on('click',function(){
+      jQuery('#share').on('click',function() {
 
           jQuery.ajax({
-           url : '/post/',
-           dataType: "json",
-           method: 'GET',
-           success: function( data ) {
-                var domain = location.hostname;
-                console.log(domain+'/'+data.imagepath);
-               FB.init({
-                  appId      : '855735074546415',
-                  xfbml      : true,
-                  version    : 'v2.5'
-                });
-               /*FB.ui({
-                  method: `share`,
-                  name: 'Facebook Dialogs',
-                  href:'http://stefanocampese.xyz',
-                  link: 'https://developers.facebook.com/docs/dialogs/',
-                  picture: domain+'/'+data.imagepath,
-                  caption: 'Best photos',
-              },*/
+              url: '/post/',
+              dataType: "json",
+              method: 'GET',
+              success: function (data) {
+                  var domain = location.hostname;
+                  console.log('http://' + domain + ':8000' + data.imagepath);
+                  FB.init({
+                      appId: '855735074546415',
+                      xfbml: true,
+                      version: 'v2.5'
+                  });
 
-               FB.api('https://graph.facebook.com/me/photos/uploaded?access_token='+data.token, 'post', { url: 'http://'+domain+''+data.imagepath, message:'oo' }, function(response) {
-                            if (!response || response.error) {
-                                //alert('Error occured: ' + JSON.stringify(response.error));
-                            } else {
-                                //alert('Post ID: ' + response);
-                            }
-                }, {scope: 'publish_stream'},
-              function (response) {
-                  if (response && response.post_id) {
-                      console.log('success');
-                  } else {
-                     console.log(response);
-                  }
+                  FB.ui({
+                      method: `share`,
+                      name: 'Facebook Dialogs',
+                      href: 'http://stefanocampese.xyz',
+                      link: 'https://developers.facebook.com/docs/dialogs/',
+                      picture: 'http://' + domain + ':8000' + data.imagepath,
+                      caption: 'Best photos',
+                  }, function (response) {
+                      if (response && response.post_id) {
+                          console.log('success');
+                      } else {
+                          console.log(response);
+                      }
+                  });
+
               }
-            );
-           },
-           error: function( data ){
-
-               alert('Something went wrong, Please contact admin');
-           },
-           always:function(data){
-
-           }
       });
-      })
-      /*
-         FB.ui(
-      {
-                  method: `share`,
-                  name: 'Facebook Dialogs',
-                  href: $(location).attr('href'),
-                  link: 'https://developers.facebook.com/docs/dialogs/',
-                  picture: 'your image url',
-                  caption: 'Ishelf Book',
-                  description: 'your description'
-              },
-              function (response) {
-                  if (response && response.post_id) {
-                      alert('success');
-                  } else {
-                     alert('error');
-                  }
-              }
-            );*/
 
-
-
-
-
+      });
 
 
     </script>

@@ -1,7 +1,0 @@
-(0.001) 
-            SELECT name, type FROM sqlite_master
-            WHERE type in ('table', 'view') AND NOT name='sqlite_sequence'
-            ORDER BY name; args=None
-(0.000) SELECT "django_migrations"."app", "django_migrations"."name" FROM "django_migrations"; args=()
-(0.002) SELECT "cron_photo"."id", "cron_photo"."photo_url", "cron_photo"."photo_https_url", "cron_photo"."photo_hashtags", "cron_photo"."photo_user", "cron_photo"."photo_user_name", "cron_photo"."photo_likes", "cron_photo"."photo_post_id", "cron_photo"."photo_created_at", "cron_photo"."photo_album_id" FROM "cron_photo" ORDER BY "cron_photo"."photo_likes" DESC LIMIT 7; args=()
-(0.000) SELECT "social_auth_usersocialauth"."id", "social_auth_usersocialauth"."user_id", "social_auth_usersocialauth"."provider", "social_auth_usersocialauth"."uid", "social_auth_usersocialauth"."extra_data" FROM "social_auth_usersocialauth" WHERE "social_auth_usersocialauth"."provider" = 'facebook'; args=('facebook',)

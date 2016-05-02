@@ -39,5 +39,30 @@
         {% endfor %}
 
     </div>
+<div class="row" style="text-align: center">
+    {% if photos %}
+      <ul class="pagination" >
+        {% if photos.has_previous %}
+          <li><a href="?page={{ page_obj.previous_page_number }}">&laquo;</a></li>
+        {% else %}
+          <li class="disabled"><a href="#">&laquo;</a></li>
+        {% endif %}
+
+        {% for num in photos.paginator.page_range %}
+          {% ifequal num photos.number %}
+            <li class="active"><a href="#">{{ num }}<span class="sr-only">(current)</span></a></li>
+          {% else %}
+            <li><a href="?page={{ num }}">{{ num }}</a></li>
+          {% endifequal %}
+        {% endfor %}
+
+        {% if photos.has_next %}
+          <li><a href="?page={{ page_obj.next_page_number }}">&raquo;</a></li>
+        {% else %}
+          <li class="disabled"><a href="#">&raquo;</a></li>
+        {% endif %}
+      </ul>
+    {% endif %}
+</div>
 
 {% endblock %}
